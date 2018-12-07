@@ -1,9 +1,16 @@
 package lv.ctco.notepad;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Reminder extends Alarm implements Expirable {
     private LocalDate date;
+    private boolean dismissed = false;
+
+    @Override
+    public void dismiss() {
+        dismissed = true;
+    }
 
     @Override
     public boolean contains(String str) {
@@ -26,10 +33,15 @@ public class Reminder extends Alarm implements Expirable {
     }
 
     @Override
-    public boolean isExpired() {
-        return super.isExpired();
-    }
+    public boolean isExpired() { // boolean - tip dannih, libo true libo false
 
+        if (dismissed) {
+            return false; //esli mi zadesmissili record, to vernjom false i ogda on nikogda boljwe ne vernjotsa
+        }
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime dt = LocalDateTime.of(getDate(), getTime());
+        return now.isAfter(dt);
+    }
     @Override
     public String toString() {
         return "Reminder{" +

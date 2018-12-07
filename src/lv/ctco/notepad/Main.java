@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 import static java.time.format.DateTimeFormatter.ofPattern;
@@ -23,6 +24,9 @@ public class Main {
             System.out.print("cmd: ");
             String cmd = scanner.next();
             switch (cmd) {
+                case "dismiss":
+                    dismiss();
+                    break;
                 case "expired":
                     listExpired();
                     break;
@@ -59,6 +63,16 @@ public class Main {
                     System.out.println("Wrong command. Try 'help'");
             }
         }
+    }
+
+    private static void dismiss() {
+        int id = askInt("Enter ID of record to dismiss");
+        Optional<Expirable> first = records.stream() //optional - eto kak kontejner u kotorogo mozhem sprositj pro najdennuju expired
+                .filter(r -> r.getId() == id) // nahodim pervuju zapisj s toj id kotoruju hotim iskatj
+                .filter(r -> r instanceof Expirable) //proverajem javlaetsa li zapisj expireble
+                .map(r -> (Expirable) r) //convertirujem v expireble
+                .findFirst();
+        first.ifPresent(e -> e.dismiss()); // esli estj u optional, to vipolnitj sledujuweje dejstvije
     }
 
     private static void listExpired() {
@@ -109,9 +123,7 @@ public class Main {
         records.forEach(System.out::println);
     }
 
-    private static void showHelp() {
-
-    }
+    private static void showHelp() { }
 
     public static String askString(String msg) {
         for (;;) {
